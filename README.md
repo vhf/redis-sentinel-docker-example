@@ -23,3 +23,7 @@ with a few tests.
     New master: 172.22.1.20
     all 3 election works tests passed in 17.000s.
     ```
+
+## Notes
+
+* `sentinel.conf` must be writeable and not shared between Sentinel instances. It constantly gets updated by the Sentinel process which writes IPs, ports, and other info to it.
