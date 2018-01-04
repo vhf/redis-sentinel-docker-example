@@ -7,7 +7,6 @@ cat sentinel.conf > .sentinel1.conf
 cat sentinel.conf > .sentinel2.conf
 cat sentinel.conf > .sentinel3.conf
 
-# docker-compose up -d redis1 sentinel1 && sleep 10
 docker-compose up -d && sleep 15
 # test suite 1
 MASTER=$(docker exec -t sentinel_redis2_1 redis-cli -h 172.22.1.21 -p 26379 SENTINEL get-master-addr-by-name my_redis_master | cut -d\" -f2 | head -n1)
