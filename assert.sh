@@ -16,7 +16,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+set +u
 export DISCOVERONLY=${DISCOVERONLY:-}
 export DEBUG=${DEBUG:-}
 export STOP=${STOP:-}
@@ -75,7 +75,7 @@ assert_end() {
     tests_endtime="$(date +%s%N)"
     # required visible decimal place for seconds (leading zeros if needed)
     local tests_time="$( \
-        printf "%010d" "$(( ${tests_endtime/%N/000000000} 
+        printf "%010d" "$(( ${tests_endtime/%N/000000000}
                             - ${tests_starttime/%N/000000000} ))")"  # in ns
     tests="$tests_ran ${*:+$* }tests"
     [[ -n "$DISCOVERONLY" ]] && echo "collected $tests." && _assert_reset && return
