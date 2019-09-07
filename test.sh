@@ -43,29 +43,31 @@ function set_vars () {
 }
 
 # test suite 1
-set_vars $(docker exec -t sentinel_redis1_1 redis-cli -h 172.22.1.31 -p 26379 SENTINEL get-master-addr-by-name my_redis_master | cut -d\" -f2 | head -n1)
-## cannot write to slave
-assert "docker exec -t sentinel_${SLAVE1_NAME}_1 redis-cli set 'foo' 123" "(error) READONLY You can't write against a read only slave.\r"
+
+set_vars $(docker exec -t redis-sentinel-docker-example_redis1_1 redis-cli -h 172.22.1.31 -p 26379 SENTINEL get-master-addr-by-name my_redis_master | cut -d\" -f2 | head -n1)
+## cannot write to replica
+assert "docker exec -t redis-sentinel-docker-example_${SLAVE1_NAME}_1 redis-cli set 'foo' 123" "(error) READONLY You can't write against a read only replica.\r"
 ## can write to master
-assert "docker exec -t sentinel_${MASTER_NAME}_1 redis-cli set 'foo' 123" "OK\r"
-## can read from slave what got written to master
-assert "docker exec -t sentinel_${SLAVE2_NAME}_1 redis-cli get 'foo'" "\"123\"\r"
+assert "docker exec -t redis-sentinel-docker-example_${MASTER_NAME}_1 redis-cli set 'foo' 123" "OK\r"
+## can read from replica what got written to master
+assert "docker exec -t redis-sentinel-docker-example_${SLAVE2_NAME}_1 redis-cli get 'foo'" "\"123\"\r"
 
 assert_end only write to master
 echo
 
 # test suite 2
+
 ## stop master
 docker-compose stop $MASTER_NAME && sleep 20
 echo
 
-set_vars $(docker exec -t sentinel_${SLAVE2_NAME}_1 redis-cli -h 172.22.1.21 -p 26379 SENTINEL get-master-addr-by-name my_redis_master | cut -d\" -f2 | head -n1)
+set_vars $(docker exec -t redis-sentinel-docker-example_${SLAVE2_NAME}_1 redis-cli -h 172.22.1.21 -p 26379 SENTINEL get-master-addr-by-name my_redis_master | cut -d\" -f2 | head -n1)
 
 ## can write to master
-assert "docker exec -t sentinel_${MASTER_NAME}_1 redis-cli set 'foo' 345" "OK\r"
+assert "docker exec -t redis-sentinel-docker-example_${MASTER_NAME}_1 redis-cli set 'foo' 345" "OK\r"
 ## can read what got written
-assert "docker exec -t sentinel_${MASTER_NAME}_1 redis-cli get 'foo'" "\"345\"\r"
+assert "docker exec -t redis-sentinel-docker-example_${MASTER_NAME}_1 redis-cli get 'foo'" "\"345\"\r"
 ## can read what got written
-assert "docker exec -t sentinel_${SLAVE2_NAME}_1 redis-cli get 'foo'" "\"345\"\r"
+assert "docker exec -t redis-sentinel-docker-example_${SLAVE2_NAME}_1 redis-cli get 'foo'" "\"345\"\r"
 
 assert_end election works
