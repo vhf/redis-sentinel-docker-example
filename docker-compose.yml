@@ -14,7 +14,7 @@ services:
     expose:
       - 26379
     volumes:
-      - ./.sentinel1.conf:/etc/sentinel.conf
+      - ./sentinel1.conf:/etc/sentinel.conf
     command: redis-server /etc/sentinel.conf --sentinel
     networks:
       foonet:
@@ -33,7 +33,7 @@ services:
     expose:
       - 26379
     volumes:
-      - ./.sentinel2.conf:/etc/sentinel.conf
+      - ./sentinel2.conf:/etc/sentinel.conf
     command: redis-server /etc/sentinel.conf --sentinel
     networks:
       foonet:
@@ -52,7 +52,7 @@ services:
     expose:
       - 26379
     volumes:
-      - ./.sentinel3.conf:/etc/sentinel.conf
+      - ./sentinel3.conf:/etc/sentinel.conf
     command: redis-server /etc/sentinel.conf --sentinel
     networks:
       foonet:
